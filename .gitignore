@@ -1,0 +1,6 @@
+env
+wenv
+.idea
+*.pyc
+ghostdriver.log
+config.py
