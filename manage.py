@@ -43,7 +43,7 @@ def run():
     # - Many hosts will use this to identify proper port -
     # If not available, default to 8080
     port = int(os.environ.get('PORT', 8080))
-    # Run the dev server, listening on assigned port
+    # Run the app on the dev server, listening on assigned port
     app.run(host='0.0.0.0', port=port)
 
 # This is what runs if the script is run from the command line
