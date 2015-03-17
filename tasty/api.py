@@ -29,10 +29,10 @@ def add_combo(fid):
         message = "Must supply either ID or Name to be matched to ID in URL."
         return Response(json.dumps(message), 422, mimetype="application/json")
     elif combo_id:
-        flavor.combinations.append(combo_id)
+        flavor.match(combo_id)
     else:
         combo = session.query(Flavor).filter(Flavor.name == combo_name).all()
-        flavor.combinations.add(combo.id)
+        flavor.match(combo.id)
     session.add(flavor)
     session.commit()
     data = flavor.as_dictionary()
@@ -64,6 +64,7 @@ def add_flavor():
     session.commit()
     # Obtain the dict info for the created object
     data = flavor.as_dictionary()
+    print data
     # And create the header for the new ingredient
     headers = {"Location": "/api/flavor/id/{}".format(flavor.id)}
     # Return that with 201 created

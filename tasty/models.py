@@ -19,16 +19,29 @@ class Flavor(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String, unique=True)
-    combinations = relationship("Flavor",
-                                secondary=combinations,
-                                primaryjoin=(combinations.c.flavor_id == id),
-                                secondaryjoin=(combinations.c.combo_id == id),
-                                backref=backref('combinations')
-                                )
+    combos = relationship("Flavor",
+                          secondary=combinations,
+                          primaryjoin=(combinations.c.flavor_id == id),
+                          secondaryjoin=(combinations.c.combo_id == id),
+                          backref=backref('flavor', lazy='dynamic'),
+                          lazy='dynamic'
+                          )
 
     def as_dictionary(self):
         return {
             "id": self.id,
             "name": self.name,
-            "combinations": self.combinations
         }
+
+    def match(self, cid):
+        if not self.is_matched(cid):
+            self.combos.append(cid)
+            return self
+
+    def unmatch(self, cid):
+        if self.is_matched(cid):
+            self.combos.remove(cid)
+            return self
+
+    def is_matched(self, cid):
+        return self.combos.filter(combinations.c.combo_id == cid).count() > 0
