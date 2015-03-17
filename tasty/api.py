@@ -43,8 +43,6 @@ def add_combo(fid):
                     mimetype="application/json")
 
 
-
-
 @app.route('/api/flavor', methods=['POST'])
 def add_flavor():
     """ Add a flavor to the DB """
