@@ -13,10 +13,11 @@ from database import session
 from utils import upload_path
 
 
-@app.route('/api/flavor/<name>', methods=['POST'])
-def add_flavor(name):
+@app.route('/api/flavor', methods=['POST'])
+def add_flavor():
     """ Add a flavor to the DB """
-
+    # Get name passed with request as argument
+    name = request.args.get("name")
     # Try to get the flavor being added from the DB
     data = session.query(Flavor).filter(Flavor.name == name).all()
     # If you got the item back from the DB, issue a warning
@@ -32,7 +33,7 @@ def add_flavor(name):
     # Obtain the dict info for the created object
     data = flavor.as_dictionary()
     # And create the header for the new ingredient
-    headers = {"Location": "/api/flavor/{}".format(name)}
+    headers = {"Location": "/api/flavor/id/{}".format(flavor.id)}
     # Return that with 201 created
     return Response(json.dumps(data), 201,
                     headers=headers,

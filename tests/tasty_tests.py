@@ -15,10 +15,15 @@ from tasty.database import Base, engine, session
 class TestAPI(unittest.TestCase):
     """ Tests for the posts API """
 
+
+
+
+
+
     def testCreateIngredient(self):
         """ Test Creating Ingredient """
 
-        response = self.client.post("/api/flavor/banana",
+        response = self.client.post("/api/flavor?name=macadamia nuts",
                                     headers=[("Accept", "application/json")],
                                     )
 
@@ -29,12 +34,12 @@ class TestAPI(unittest.TestCase):
         # Verify the endpoint is setting the correct Location header
         # This should be the link to the new post
         self.assertEqual(urlparse(response.headers.get("Location")).path,
-                         "/api/flavor/banana")
+                         "/api/flavor/id/1")
         # Decode the response with json.loads
         data = json.loads(response.data)
         # Validate the response
         self.assertEqual(data["id"], 1)
-        self.assertEqual(data["name"], "banana")
+        self.assertEqual(data["name"], "macadamia nuts")
         # Query DB to validate status
         data = session.query(models.Flavor).all()
         print data
@@ -45,7 +50,7 @@ class TestAPI(unittest.TestCase):
         print data
         # Validate the content of the item retrieved from the DB
         self.assertEqual(data.id, 1)
-        self.assertEqual(data.name, "banana")
+        self.assertEqual(data.name, "macadamia nuts")
 
 
     def setUp(self):
