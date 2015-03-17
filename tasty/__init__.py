@@ -1,5 +1,8 @@
 __author__ = 'kristjin@github'
 
+# Import the OS stuffs
+import os
+
 # Import the Flask object
 from flask import Flask
 
@@ -14,7 +17,10 @@ config_path = os.environ.get("CONFIG_PATH", "tasty.config.DevelopmentConfig")
 # Configure the app using the object specified
 app.config.from_object(config_path)
 
-# Anything that will use the app must be
-# imported after its creation
-from . import views  # Same as import tasty.views
-from . import filters  # Same as import tasty.filters
+import api
+import views
+import filters
+
+from database import Base, engine
+Base.metadata.create_all(engine)
+

@@ -36,6 +36,28 @@ manager = Manager(app)
 #     session.add(user)
 #     session.commit()
 
+@manager.command
+def seed():
+    ingredients = ['eggs', 'bacon', 'bananas', 'chocolate', 'macadamia nuts', 'rum']
+    for ingredient in ingredients:
+        i = Flavor(name=ingredient)
+        session.add(i)
+        session.commit()
+
+    eggs = session.Query(Flavor).filter(Flavor.name == 'eggs').all()
+    bacon = session.Query(Flavor).filter(Flavor.name == 'bacon').all()
+    bananas = session.Query(Flavor).filter(Flavor.name == 'bananas').all()
+    chocolate = session.Query(Flavor).filter(Flavor.name == 'chocoalte').all()
+    macadamia = session.Query(Flavor).filter(Flavor.name == 'macadamia nuts').all()
+    rum = session.Query(Flavor).filter(Flavor.name == 'rum').all()
+
+    eggs.combinations = [bacon]
+    bananas.combinations = [chocolate, macadamia, rum]
+    chocolate.combinations = [bananas, macadamia, bacon]
+    macadmia.combinations = [bananas, chocolate]
+    rum.combinations = [chocolate, bananas]
+
+    session.add_all([eggs, bacon, bananas, chocolate, macadamia, rum])
 
 @manager.command
 def run():
