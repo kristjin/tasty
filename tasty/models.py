@@ -3,18 +3,14 @@ __author__ = 'kristjin@github'
 from flask import url_for
 
 from sqlalchemy import Column, Integer, String, Table, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 
 from .database import Base
 
 
 combinations = Table("combinations", Base.metadata,
-                     Column("flavor1_id", Integer,
-                            ForeignKey("flavors.id"),
-                            primary_key=True),
-                     Column("flavor2_id", Integer,
-                            ForeignKey("flavors.id"),
-                            primary_key=True)
+                     Column("flavor_id", Integer, ForeignKey("flavors.id")),
+                     Column("combo_id", Integer, ForeignKey("flavors.id"))
                      )
 
 
@@ -25,8 +21,9 @@ class Flavor(Base):
     name = Column(String, unique=True)
     combinations = relationship("Flavor",
                                 secondary=combinations,
-                                primaryjoin=id == combinations.c.flavor1_id,
-                                secondaryjoin=id == combinations.c.flavor2_id,
+                                primaryjoin=(combinations.c.flavor_id == id),
+                                secondaryjoin=(combinations.c.combo_id == id),
+                                backref=backref('combinations')
                                 )
 
     def as_dictionary(self):

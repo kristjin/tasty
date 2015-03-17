@@ -9,13 +9,51 @@ import json
 from urlparse import urlparse
 
 from tasty import app
-from tasty import models
+from tasty.models import Flavor
 from tasty.database import Base, engine, session
 
 class TestAPI(unittest.TestCase):
     """ Tests for the posts API """
 
 
+    def testCreateCombination(self):
+        """ Test Creating Flavor Combinations """
+        flavors = ["eggs", 'bacon', 'chocolate', 'banana', 'macadamia', 'rum']
+        for flavor in flavors:
+            x = Flavor(name=flavor)
+            session.add(x)
+            session.commit()
+
+        flavors = session.query(Flavor).all()
+
+
+        response = self.client.post("/api/flavor/id/1?id=2")
+
+        # Verify request to endpoint was successful using 201 created
+        self.assertEqual(response.status_code, 201)
+        # Verify that the response is JSON type
+        self.assertEqual(response.mimetype, "application/json")
+        # Verify the endpoint is setting the correct Location header
+        # This should be the link to the new post
+        self.assertEqual(urlparse(response.headers.get("Location")).path,
+                         "/api/flavor/id/1")
+        # Decode the response with json.loads
+        data = json.loads(response.data)
+        # Validate the response
+        self.assertEqual(data["id"], 1)
+        self.assertEqual(data["name"], "eggs")
+        self.assertEqual(data["combinations"], [2])
+
+        # Query DB to validate status
+        data = session.query(models.Flavor).all()
+        # Verify only one item in DB
+        self.assertEqual(len(data), 6)
+        # Isolate first item in the list
+        data = data[0]
+        # Validate the content of the item retrieved from the DB
+        self.assertEqual(data.id, 1)
+        self.assertEqual(data.name, "eggs")
+        self.assertEqual(data.combinations, [2])
 
 
 
@@ -41,13 +79,11 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(data["id"], 1)
         self.assertEqual(data["name"], "macadamia nuts")
         # Query DB to validate status
-        data = session.query(models.Flavor).all()
-        print data
+        data = session.query(Flavor).all()
         # Verify only one item in DB
         self.assertEqual(len(data), 1)
         # Isolate the one item in the list
         data = data[0]
-        print data
         # Validate the content of the item retrieved from the DB
         self.assertEqual(data.id, 1)
         self.assertEqual(data.name, "macadamia nuts")
