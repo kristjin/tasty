@@ -3,7 +3,7 @@ __author__ = 'kristjin@github'
 from flask import url_for
 
 from sqlalchemy import Column, Integer, String, Table, ForeignKey
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship
 
 from .database import Base
 
@@ -26,11 +26,14 @@ class Flavor(Base):
                            backref='flavor'
                            )
 
+    def match_ids(self):
+        return [m.id for m in self.matches]
+
     def as_dictionary(self):
         return {
             "id": self.id,
             "name": self.name,
-            "matches": [m.id for m in self.matches]
+            "match_ids": [m.id for m in self.matches]
         }
 
     def match(self, flavor):
@@ -44,5 +47,4 @@ class Flavor(Base):
             return self
 
     def is_matched(self, flavor):
-        print self.matches
-        return
+        return flavor.id in self.match_ids()

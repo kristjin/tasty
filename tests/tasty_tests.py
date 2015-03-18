@@ -39,6 +39,7 @@ class TestAPI(unittest.TestCase):
         # Validate the response
         self.assertEqual(data["id"], 1)
         self.assertEqual(data["name"], "eggs")
+        self.assertEqual(data["match_ids"], [2])
 
         # Query DB to validate status
         data = session.query(Flavor).all()
@@ -50,9 +51,6 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(data.id, 1)
         self.assertEqual(data.name, "eggs")
         self.assertEqual(data.matches[0].id, 2)
-
-
-
 
     def testCreateIngredient(self):
         """ Test Creating Ingredient """
