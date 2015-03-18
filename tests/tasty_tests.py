@@ -12,20 +12,17 @@ from tasty import app
 from tasty.models import Flavor
 from tasty.database import Base, engine, session
 
+
 class TestAPI(unittest.TestCase):
     """ Tests for the posts API """
 
-
     def testCreateCombination(self):
-        """ Test Creating Flavor Combinations """
+        """ Test Creating a Flavor Combination """
         flavors = ["eggs", 'bacon', 'chocolate', 'banana', 'macadamia', 'rum']
         for flavor in flavors:
             x = Flavor(name=flavor)
             session.add(x)
             session.commit()
-
-        flavors = session.query(Flavor).all()
-
 
         response = self.client.post("/api/flavor/id/1?id=2")
 
@@ -42,10 +39,9 @@ class TestAPI(unittest.TestCase):
         # Validate the response
         self.assertEqual(data["id"], 1)
         self.assertEqual(data["name"], "eggs")
-        self.assertEqual(data["combinations"], [2])
 
         # Query DB to validate status
-        data = session.query(models.Flavor).all()
+        data = session.query(Flavor).all()
         # Verify only one item in DB
         self.assertEqual(len(data), 6)
         # Isolate first item in the list
@@ -53,7 +49,7 @@ class TestAPI(unittest.TestCase):
         # Validate the content of the item retrieved from the DB
         self.assertEqual(data.id, 1)
         self.assertEqual(data.name, "eggs")
-        self.assertEqual(data.combinations, [2])
+        self.assertEqual(data.matches[0].id, 2)
 
 
 

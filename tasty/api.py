@@ -15,7 +15,7 @@ from utils import upload_path
 @app.route('/api/flavor/id/<int:fid>', methods=['POST'])
 def add_combo(fid):
     """ Add a flavor combination """
-    combo_id = request.args.get("id")
+    combo_id = int(request.args.get("id"))
     combo_name = request.args.get("name")
     flavor = session.query(Flavor).get(fid)
 
@@ -29,10 +29,11 @@ def add_combo(fid):
         message = "Must supply either ID or Name to be matched to ID in URL."
         return Response(json.dumps(message), 422, mimetype="application/json")
     elif combo_id:
-        flavor.match(combo_id)
+        combo = session.query(Flavor).get(combo_id)
+        flavor.match(combo)
     else:
-        combo = session.query(Flavor).filter(Flavor.name == combo_name).all()
-        flavor.match(combo.id)
+        combo = session.query(Flavor).filter(Flavor.name == combo_name).first()
+        flavor.match(combo)
     session.add(flavor)
     session.commit()
     data = flavor.as_dictionary()
