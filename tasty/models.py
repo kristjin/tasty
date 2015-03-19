@@ -26,6 +26,7 @@ class Flavor(Base):
                            secondaryjoin=id == flavor_to_flavor.c.child_flavor_id,
                            backref='flavor'
                            )
+    creator_id = Column(Integer, ForeignKey('users.id'))
 
     def matched_html(self):
         h = "<ul>\n"
@@ -55,7 +56,8 @@ class Flavor(Base):
             return self
 
     def is_matched(self, flavor):
-        return flavor.id in self.match_ids()
+        return flavor.id in self.matched_ids()
+
 
 class User(Base, UserMixin):
     __tablename__ = "users"
@@ -64,3 +66,4 @@ class User(Base, UserMixin):
     name = Column(String(128))
     email = Column(String(128), unique=True)
     password = Column(String(128))
+    flavors = relationship("Flavor", backref="creator")

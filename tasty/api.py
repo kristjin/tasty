@@ -66,17 +66,21 @@ def add_combo(fid):
 @app.route('/api/flavor', methods=['POST'])
 def add_flavor():
     """ Add a flavor to the DB """
-    # Get name passed with request as argument
-    name = request.args.get("name")
+    # Get creator user name passed with request as argument
+    creator = request.args.get("creator")
+    # Get flavor name passed as argument
+    flavor_name = request.args.get("flavor")
+
     # Try to get the flavor being added from the DB
-    data = session.query(Flavor).filter(Flavor.name == name).all()
+    data = session.query(Flavor).filter(Flavor.name == flavor_name).all()
     # If you got the item back from the DB, issue a warning
     if data:
         message = {"message": "Entry matching request already exists in database."}
         return Response(json.dumps(message), 422, mimetype="application/json")
     # Otherwise create the flavor
     flavor = Flavor()
-    flavor.name = name
+    flavor.name = flavor_name
+    flavor.creator = creator
     # Add it to the DB
     session.add(flavor)
     session.commit()

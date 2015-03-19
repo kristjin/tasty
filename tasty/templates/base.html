@@ -5,15 +5,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <title>Blogful</title>
+  <title>Tasty!</title>
 
-  <!-- CSS -->
-  <style>
-    div.metadata {
-    margin-top: 20px;
-    font-size: 1.5em;
-    }
-  </style>
   <!-- Bootstrap -->
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
   <!-- Blog -->
@@ -56,7 +49,7 @@
 
       {% with auth_user = current_user.is_authenticated() %}
       {% if auth_user %}
-        <li><a href="/flavor/add">Add Post</a></li>
+        <li><a href="/flavor/add">Add Flavor</a></li>
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ current_user.name }} <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">

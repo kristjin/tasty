@@ -35,13 +35,29 @@ def main_tasty(page=1, paginate_by=10):
 
 
 @app.route("/flavor/<int:fid>")
-def tasty(fid):
+def view_flavor_get(fid):
     flavor = session.query(Flavor).get(fid)
     return render_template("flavor.html",
                            current_user=current_user,
                            flavor=flavor,
                            pair_list=flavor.matched_ids,
                            )
+
+
+@app.route("/flavor/add", methods=["POST"])
+def add_flavor_post():
+    flavor = Flavor(
+        name=request.form["flavor"],
+        creator=current_user,
+    )
+    session.add(flavor)
+    session.commit()
+
+    return redirect("/flavor/{}".format(flavor.id))
+
+@app.route("/flavor/add", methods=["GET"])
+def add_flavor_get():
+    return render_template("add_flavor.html")
 
 
 @app.route("/login", methods=["GET"])
