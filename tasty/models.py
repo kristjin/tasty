@@ -1,6 +1,7 @@
 __author__ = 'kristjin@github'
 
 from flask import url_for
+from flask.ext.login import UserMixin
 
 from sqlalchemy import Column, Integer, String, Table, ForeignKey
 from sqlalchemy.orm import relationship
@@ -26,7 +27,14 @@ class Flavor(Base):
                            backref='flavor'
                            )
 
-    def match_ids(self):
+    def matched_html(self):
+        h = "<ul>\n"
+        for m in self.matches:
+            h += "  <li>{}</li>\n".format(m.name)
+        h += "</ul>"
+        return h
+
+    def matched_ids(self):
         return [m.id for m in self.matches]
 
     def as_dictionary(self):
@@ -48,3 +56,11 @@ class Flavor(Base):
 
     def is_matched(self, flavor):
         return flavor.id in self.match_ids()
+
+class User(Base, UserMixin):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(128))
+    email = Column(String(128), unique=True)
+    password = Column(String(128))

@@ -82,7 +82,6 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(data.id, 1)
         self.assertEqual(data.name, "macadamia nuts")
 
-
     def setUp(self):
         """ Test setup """
         self.client = app.test_client()

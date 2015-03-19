@@ -1,0 +1,13 @@
+{% macro render_flavor(flavor, pair_list) %}
+<div class="row">
+  <div class="col-md-2 text-right metadata">
+    <h1>{{ flavor.name }}</h1>
+  </div>
+  <div class="col-md-10">
+    <h2>
+      Pairings
+    </h2>
+      {{ pair_list }}
+  </div>
+</div>
+{% endmacro %}
