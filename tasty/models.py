@@ -36,6 +36,7 @@ class Flavor(Base):
         return h
 
     def matched_ids(self):
+        print self.matches
         return [m.id for m in self.matches]
 
     def as_dictionary(self):

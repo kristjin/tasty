@@ -55,7 +55,7 @@ def add_combo(fid):
     data = flavor.as_dictionary()
 
     # Set the header to the page for the parent ingredient
-    headers = {"Location": "/api/flavor/id/{}".format(flavor.id)}
+    headers = {"Location": "/flavor/{}".format(flavor.id)}
 
     # Return the response
     return Response(json.dumps(data), 201,

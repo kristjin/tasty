@@ -16,6 +16,7 @@ from tasty.database import Base, engine, session
 class TestAPI(unittest.TestCase):
     """ Tests for the posts API """
 
+
     def testCreateCombination(self):
         """ Test Creating a Flavor Combination """
         flavors = ["eggs", 'bacon', 'chocolate', 'banana', 'macadamia', 'rum']
@@ -55,7 +56,7 @@ class TestAPI(unittest.TestCase):
     def testCreateIngredient(self):
         """ Test Creating Ingredient """
 
-        response = self.client.post("/api/flavor?name=macadamia nuts",
+        response = self.client.post("/api/flavor?flavor_name=macadamia nuts&creator=",
                                     headers=[("Accept", "application/json")],
                                     )
 
@@ -69,6 +70,7 @@ class TestAPI(unittest.TestCase):
                          "/api/flavor/id/1")
         # Decode the response with json.loads
         data = json.loads(response.data)
+        print data
         # Validate the response
         self.assertEqual(data["id"], 1)
         self.assertEqual(data["name"], "macadamia nuts")
