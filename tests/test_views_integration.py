@@ -17,8 +17,6 @@ from tasty.database import Base, engine, session
 class TestViews(unittest.TestCase):
     """ Tests for Tasty! views integration """
 
-    def test
-
     def testAddFlavor(self):
         """ Test Adding a Flavor """
         # Login
