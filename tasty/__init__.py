@@ -17,9 +17,8 @@ config_path = os.environ.get("CONFIG_PATH", "tasty.config.DevelopmentConfig")
 # Configure the app using the object specified
 app.config.from_object(config_path)
 
-import api
 import views
-import filters
+
 
 from database import Base, engine
 Base.metadata.create_all(engine)

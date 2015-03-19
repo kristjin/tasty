@@ -9,7 +9,7 @@ from .models import Flavor, User
 
 @app.route("/")
 @app.route("/page/<int:page>")
-def main_tasty(page=1, paginate_by=10):
+def view_flavors_list(page=1, paginate_by=10):
     # Zero-indexed page
     page_index = page - 1
 
@@ -75,4 +75,4 @@ def login_post():
         return redirect(url_for("login_get"))
 
     login_user(user)
-    return redirect(request.args.get('next') or url_for("main_tasty"))
+    return redirect(request.args.get('next') or url_for("view_flavors_list"))

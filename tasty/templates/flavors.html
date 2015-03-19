@@ -13,13 +13,13 @@
 
     {% if has_next %}
       <li class="previous" >
-        <a href="{{ url_for('main_tasty', page=page + 1) }}">&larr; Older</a>
+        <a href="{{ url_for('view_flavors_list', page=page + 1) }}">&larr; Older</a>
       </li>
     {% endif %}
 
     {% if has_prev %}
       <li class="next">
-        <a href="{{ url_for('main_tasty', page=page - 1) }}">&rarr; Newer</a>
+        <a href="{{ url_for('view_flavors_list', page=page - 1) }}">&rarr; Newer</a>
       </li>
     {% endif %}
 
