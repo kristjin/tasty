@@ -31,13 +31,15 @@ class Flavor(Base):
     def matched_html(self):
         h = "<ul>\n"
         for m in self.matches:
-            h += "  <li>{}</li>\n".format(m.name)
+            h += '  <li display="inline">{}</li>\n'.format(m.name)
         h += "</ul>"
         return h
 
     def matched_ids(self):
-        print self.matches
-        return [m.id for m in self.matches]
+        if self.matches:
+            return [m.id for m in self.matches]
+        else:
+            return []
 
     def as_dictionary(self):
         return {

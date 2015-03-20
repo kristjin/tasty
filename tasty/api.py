@@ -2,7 +2,7 @@ __author__ = 'kristjin@github'
 import os.path
 import json
 
-from flask import request, Response, url_for, send_from_directory
+from flask import request, Response, url_for, send_from_directory, redirect
 from werkzeug.utils import secure_filename
 from jsonschema import validate, ValidationError
 
@@ -11,6 +11,8 @@ import decorators
 from tasty import app
 from database import session
 from utils import upload_path
+
+
 
 
 @app.route('/api/flavor/id/<int:fid>', methods=['POST'])

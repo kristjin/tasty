@@ -44,6 +44,59 @@ def view_flavor_get(fid):
                            )
 
 
+@app.route('/unmatch/<int:fid>')
+@app.route('/unmatch/<int:fid>/<int:mid>', methods=['GET'])
+def unmatch_flavors(fid, mid=0):
+    """ Unpair a flavor and a matching flavor """
+
+    flavor = session.query(Flavor).get(fid)
+    if mid:
+        match = session.query(Flavor).get(mid)
+        flavor.unmatch(match)
+        session.add(flavor)
+        session.commit()
+
+    all_flavors = session.query(Flavor).all()
+    flavor_ids = set(f.id for f in all_flavors)
+    matched_ids = set(m.id for m in flavor.matches)
+    unmatched_ids = set(flavor_ids - matched_ids)
+    unmatched_ids.remove(fid)
+    unmatched_flavors = []
+    for fid in unmatched_ids:
+        unmatched_flavors.append(session.query(Flavor).get(fid))
+
+    return render_template("match_flavors.html",
+                           flavor=flavor,
+                           unmatched_flavors=unmatched_flavors)
+
+
+
+@app.route('/match/<int:fid>')
+@app.route('/match/<int:fid>/<int:mid>', methods=['GET'])
+def match_flavors(fid, mid=0):
+    """ Pair a flavor and a matching flavor """
+
+    flavor = session.query(Flavor).get(fid)
+    if mid:
+        match = session.query(Flavor).get(mid)
+        flavor.match(match)
+        session.add(flavor)
+        session.commit()
+
+    all_flavors = session.query(Flavor).all()
+    flavor_ids = set(f.id for f in all_flavors)
+    matched_ids = set(m.id for m in flavor.matches)
+    unmatched_ids = set(flavor_ids - matched_ids)
+    unmatched_ids.remove(fid)
+    unmatched_flavors = []
+    for fid in unmatched_ids:
+        unmatched_flavors.append(session.query(Flavor).get(fid))
+
+    return render_template("match_flavors.html",
+                           flavor=flavor,
+                           unmatched_flavors=unmatched_flavors)
+
+
 @app.route("/flavor/add", methods=["POST"])
 def add_flavor_post():
     flavor = Flavor(

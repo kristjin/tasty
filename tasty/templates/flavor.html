@@ -1,10 +1,25 @@
-
-{% import "macros.html" as macros %}
-
 {% extends "base.html" %}
+{% import "macros.html" as macros %}
 
 {% block content %}
 
-{{ macros.render_flavor(flavor, pair_list) }}
+<div class="row">
+
+  <div class="col-md-2 text-right metadata">
+
+    <h3><a href="/flavor/{{ flavor.id }}">{{ flavor.name }}  </a></h3>
+    <form action="/match/{{ flavor.id }}">
+        <button class="btn btn-default" type="submit">Add Flavor Pairings...</button>
+    </form>
+
+  </div>
+
+  <div class="col-md-10">
+
+        {{ macros.matched_list(flavor) }}
+
+  </div>
+
+
 
 {% endblock %}

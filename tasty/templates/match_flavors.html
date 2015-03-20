@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% import "macros.html" as macros %}
+
+{% block content %}
+
+<div class="row">
+
+  <div class="col-md-2 text-right metadata">
+
+    <h2><a href="/flavor/{{ flavor.id }}">{{ flavor.name }}  </a></h2>
+
+  </div>
+
+  <div class="col-md-5">
+
+    <h3>Match Flavors...</h3>
+    <h4>Click to match to {{ flavor.name }}:</h4>
+    {{ macros.unmatched_list(unmatched_flavors, flavor) }}
+
+  </div>
+
+  <div class="col-md-5">
+
+    <h3>Unmatch Flavors</h3>
+    <h4>Click to unmatch from {{ flavor.name }}:</h4>
+    {{ macros.matched_list(flavor) }}
+
+  </div>
+
+</div> <!-- /.row -->
+
+
+{% endblock %}
