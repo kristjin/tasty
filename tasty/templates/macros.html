@@ -19,7 +19,7 @@
 <ul>
 {% if flavor.matches %}
   {%  for match in flavor.matches %}
-  <li class="list-group-item"><a href="/flavor/{{ match.id }}">{{ match.name }}  </a></li>
+  <li class="list-group-item"><a href="/unmatch/{{ flavor.id }}/{{ match.id }}">{{ match.name }}  </a></li>
   {% endfor %}
 {% else %}
   <li class="list-group-item">No matches yet!  </li>
