@@ -47,6 +47,7 @@ def view_flavor_get(fid):
 
 @app.route('/unmatch/<int:fid>')
 @app.route('/unmatch/<int:fid>/<int:mid>', methods=['GET'])
+@login_required
 def unmatch_flavors(fid, mid=0):
     """ Unpair a flavor and a matching flavor """
 
@@ -72,9 +73,9 @@ def unmatch_flavors(fid, mid=0):
                            unmatched_flavors=unmatched_flavors)
 
 
-
 @app.route('/match/<int:fid>')
 @app.route('/match/<int:fid>/<int:mid>', methods=['GET'])
+@login_required
 def match_flavors(fid, mid=0):
     """ Pair a flavor and a matching flavor """
 
@@ -101,6 +102,7 @@ def match_flavors(fid, mid=0):
 
 
 @app.route("/flavor/add", methods=["POST"])
+@login_required
 def add_flavor_post():
     flavor = Flavor(
         name=request.form["flavor"],
@@ -112,8 +114,16 @@ def add_flavor_post():
     return redirect("/flavor/{}".format(flavor.id))
 
 @app.route("/flavor/add", methods=["GET"])
+@login_required
 def add_flavor_get():
     return render_template("add_flavor.html")
+
+
+@app.route("/logout", methods=["GET"])
+@login_required
+def logout_get():
+    logout_user()
+    return render_template("login.html")
 
 
 @app.route("/login", methods=["GET"])
