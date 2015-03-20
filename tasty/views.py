@@ -41,6 +41,7 @@ def view_flavor_get(fid):
                            current_user=current_user,
                            flavor=flavor,
                            pair_list=flavor.matched_ids,
+                           view_only=1
                            )
 
 
@@ -67,6 +68,7 @@ def unmatch_flavors(fid, mid=0):
 
     return render_template("match_flavors.html",
                            flavor=flavor,
+                           view_only=0,
                            unmatched_flavors=unmatched_flavors)
 
 
@@ -94,7 +96,8 @@ def match_flavors(fid, mid=0):
 
     return render_template("match_flavors.html",
                            flavor=flavor,
-                           unmatched_flavors=unmatched_flavors)
+                           unmatched_flavors=unmatched_flavors,
+                           view_only=0)
 
 
 @app.route("/flavor/add", methods=["POST"])
