@@ -145,7 +145,7 @@ def add_flavor_post():
     flavor = session.query(Flavor).filter(Flavor.name == flavor_name).first()
     if flavor:
         flash("That flavor already exists in the database", "danger")
-        redirect("/flavor/{}".format(flavor.id))
+        return redirect("/flavor/{}".format(flavor.id))
     else:
         flavor = Flavor(
             name=flavor_name,
