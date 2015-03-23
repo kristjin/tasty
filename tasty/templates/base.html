@@ -43,7 +43,8 @@
 
       {% with anon_user = current_user.is_anonymous() %}
       {% if anon_user %}
-        <li><a href="/login">Log In</a></li>
+        <li><a href="/newuser">Create Sign In</a></li>
+        <li><a href="/login">Sign In</a></li>
       {% endif %}
       {% endwith %}
 
@@ -70,6 +71,7 @@
   </div>
 </div>
 
+<!-- The following with section is used to flash messages to the user --!>
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
     {% for category, message in messages %}

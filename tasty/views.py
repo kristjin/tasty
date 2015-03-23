@@ -1,15 +1,51 @@
 __author__ = 'kristjin@github'
 from flask import flash, render_template, request, redirect, url_for
 from flask.ext.login import login_user, logout_user, login_required, current_user
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from tasty import app
 from .database import session
 from .models import Flavor, User
 
+
+@app.route("/newuser", methods=["POST"])
+def create_new_user_post():
+    email = request.form["email"]
+    name = request.form["name"]
+    pw1 = request.form["pw1"]
+    pw2 = request.form["pw2"]
+
+    user = session.query(User).filter(User.email == email).first()
+    if user:
+        flash("An account with that email already exists in the database.", "danger")
+        return redirect("/login")
+    elif not email or not name or not pw1 or not pw2:
+        flash("All fields are required.  Please enter the missing data and try again.", "danger")
+        return redirect("/newuser")
+    elif pw1 != pw2:
+        flash("Passwords do not match.", "danger")
+        return redirect("/newuser")
+    else:
+        user = User(
+            email=email,
+            name=name,
+            password=generate_password_hash(pw1)
+        )
+        session.add(user)
+        session.commit()
+        return redirect("/login")
+
+
+@app.route("/newuser")
+def create_new_user_get():
+    """ View the page for creating a new user """
+    return render_template("newuser.html")
+
+
 @app.route("/")
 @app.route("/page/<int:page>")
 def view_flavors_list(page=1, paginate_by=10):
+    """ view a list of flavors """
     # Zero-indexed page
     page_index = page - 1
 
@@ -36,6 +72,7 @@ def view_flavors_list(page=1, paginate_by=10):
 
 @app.route("/flavor/<int:fid>")
 def view_flavor_get(fid):
+    """ View match details of a given ingredient """
     flavor = session.query(Flavor).get(fid)
     return render_template("flavor.html",
                            current_user=current_user,
@@ -104,14 +141,19 @@ def match_flavors(fid, mid=0):
 @app.route("/flavor/add", methods=["POST"])
 @login_required
 def add_flavor_post():
-    flavor = Flavor(
-        name=request.form["flavor"],
-        creator=current_user,
-    )
-    session.add(flavor)
-    session.commit()
-
-    return redirect("/flavor/{}".format(flavor.id))
+    flavor_name = request.form["flavor"]
+    flavor = session.query(Flavor).filter(Flavor.name == flavor_name).first()
+    if flavor:
+        flash("That flavor already exists in the database", "danger")
+        redirect("/flavor/{}".format(flavor.id))
+    else:
+        flavor = Flavor(
+            name=flavor_name,
+            creator=current_user,
+        )
+        session.add(flavor)
+        session.commit()
+        return redirect("/flavor/{}".format(flavor.id))
 
 @app.route("/flavor/add", methods=["GET"])
 @login_required

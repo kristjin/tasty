@@ -3,7 +3,7 @@ __author__ = 'kristjin@github'
 from flask import url_for
 from flask.ext.login import UserMixin
 
-from sqlalchemy import Column, Integer, String, Table, ForeignKey
+from sqlalchemy import Column, Integer, String, Table, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 
 from .database import Base
@@ -62,11 +62,17 @@ class Flavor(Base):
         return flavor.id in self.matched_ids()
 
 
+
 class User(Base, UserMixin):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True)
+    admin = Column(Boolean())
     name = Column(String(128))
     email = Column(String(128), unique=True)
     password = Column(String(128))
     flavors = relationship("Flavor", backref="creator")
+    # Following should be JSON strings of personal matches
+    # and strings of ints for favorites
+    favorites = Column(String())
+    matches = Column(String())
