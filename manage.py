@@ -1,6 +1,7 @@
 __author__ = 'kristjin@github'
 
 import os
+import json
 
 # Flask-Script Manager class for adding command line arguments easily
 from flask.ext.script import Manager
@@ -24,14 +25,23 @@ def adduser():
     if session.query(User).filter_by(email=email).first():
         print("user with that email address already exists")
         return
-
+    admin = ""
+    while not (admin == "y" or admin == "n"):
+        admin = raw_input("Admin? (y or n)")
+    if admin == "y":
+        admin = True
+    elif admin == "n":
+        admin = False
     password = ""
     password_2 = ""
     while not (password and password_2) or password != password_2:
         password = getpass("Password: ")
         password_2 = getpass("Re-enter password: ")
     user = User(name=name, email=email,
-                password=generate_password_hash(password))
+                password=generate_password_hash(password),
+                admin=admin,
+                matches=json.dumps({})
+                )
     session.add(user)
     session.commit()
 

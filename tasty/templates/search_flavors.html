@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% import "macros.html" as macros %}
+
+{% block content %}
+
+<form role="form" method="POST">
+    <h1>Welcome to Tasty!</h1>
+    <h2>A flavor pairings lexicon</h2>
+    <div class="form-group">
+        <label for="flavor">Search for a flavor:</label>
+        <input type="text" class="form-control" id="flavor" name="flavor" placeholder="Flavor (eg: bacon)" required>
+    </div>
+    <button type="submit" class="btn btn-default">Search...</button>
+</form>
+{% endblock %}

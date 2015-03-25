@@ -11,15 +11,18 @@
     <form action="/match/{{ flavor.id }}">
         <button class="btn btn-default" type="submit">Edit Flavor Pairings</button>
     </form>
+    {%  if  current_user.admin %}
+    <form action="/default_match/{{ flavor.id }}">
+        <button class="btn btn-default" type="submit">Edit DEFAULT Pairings</button>
+    </form>
+    {% endif %}
 
   </div>
 
   <div class="col-md-10">
 
-        {{ macros.matched_list(flavor, view_only) }}
+        {{ macros.matched_relink(all_matches, flavor) }}
 
   </div>
-
-
 
 {% endblock %}

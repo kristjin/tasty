@@ -1,63 +1,70 @@
-{% macro inline_match_list(flavor) %}
-
-<ul class="match">
-{% if flavor.matches %}
-  {%  for match in flavor.matches %}
-  <li><a href="/flavor/{{ match.id }}">{{ match.name }}  </a></li>
-  {% endfor %}
-{% else %}
-  <li>No matches yet!  </li>
-  <li>Why not add some?</li>
-{% endif %}
-</ul>
-
+{% macro pop_empty() %}
+    <li class="list-group-item">No matches yet!  </li>
+    <li class="list-group-item">Why not add some?</li>
+    <li class="list-group-item">Click the button on the </li>
+    <li class="list-group-item">left to edit matches.</li>
 {% endmacro %}
 
-
-{% macro matched_list(flavor, view_only) %}
-
+{% macro matched_relink(all_matches, flavor) %}
 <ul>
-{% if flavor.matches %}
-
-
-  {%  for match in flavor.matches %}
-  {% if view_only %}
-  <li class="list-group-item"><a href="/flavor/{{ match.id }}">{{ match.name }}  </a></li>
-  {% else %}
-  <li class="list-group-item"><a href="/unmatch/{{ flavor.id }}/{{ match.id }}">{{ match.name }}  </a></li>
-  {% endif %}
-  {% endfor %}
-
-{% else %}
-  <li class="list-group-item">No matches yet!  </li>
-  <li class="list-group-item">Why not add some?</li>
-  <li class="list-group-item">No matches yet!  </li>
-  <li class="list-group-item">Why not add some?</li>
-  <li class="list-group-item">No matches yet!  </li>
-  <li class="list-group-item">Why not add some?</li>
-{% endif %}
+    {% if all_matches %}
+        {% for match in all_matches %}
+                <li class="list-group-item"><a href="/flavor/{{ match.id }}">{{ match.name }}  </a></li>
+        {% endfor %}
+    {% else %}
+        {{ pop_empty() }}
+    {% endif %}
 </ul>
-
 {% endmacro %}
 
 
+{% macro matched_default_list(all_matches, flavor) %}
+<ul>
+    {% if all_matches %}
+        {% for match in all_matches %}
+            <li class="list-group-item"><a href="/default_unmatch/{{ flavor.id }}/{{ match.id }}">{{ match.name }}  </a></li>
+        {% endfor %}
+    {% else %}
+        {{ pop_empty() }}
+    {% endif %}
+</ul>
+{% endmacro %}
+
+
+{% macro unmatched_default_list(unmatched_flavors, flavor) %}
+<ul>
+    {% if unmatched_flavors %}
+        {%  for f in unmatched_flavors %}
+                <li class="list-group-item"><a href="/default_match/{{ flavor.id }}/{{ f.id }}">{{ f.name }}  </a></li>
+        {% endfor %}
+    {% else %}
+        {{ pop_empty() }}
+    {% endif %}
+</ul>
+{% endmacro %}
+
+
+{% macro matched_list(all_matches, flavor) %}
+<ul>
+    {% if all_matches %}
+        {% for match in all_matches %}
+                <li class="list-group-item"><a href="/unmatch/{{ flavor.id }}/{{ match.id }}">{{ match.name }}  </a></li>
+        {% endfor %}
+    {% else %}
+        {{ pop_empty() }}
+    {% endif %}
+</ul>
+{% endmacro %}
 
 
 {% macro unmatched_list(unmatched_flavors, flavor) %}
-
 <ul>
-{% if unmatched_flavors %}
-  {%  for f in unmatched_flavors %}
-  <li class="list-group-item"><a href="/match/{{ flavor.id }}/{{ f.id }}">{{ f.name }}  </a></li>
-  {% endfor %}
-{% else %}
-  <li class="list-group-item">No more flavors! </li>
-  <li class="list-group-item">Why not add some?</li>
-  <li class="list-group-item">No more flavors! </li>
-  <li class="list-group-item">Why not add some?</li>
-  <li class="list-group-item">No more flavors! </li>
-  <li class="list-group-item">Why not add some?</li>
-{% endif %}
+    {% if unmatched_flavors %}
+        {%  for f in unmatched_flavors %}
+            <li class="list-group-item"><a href="/match/{{ flavor.id }}/{{ f.id }}">{{ f.name }}  </a></li>
+        {% endfor %}
+    {% else %}
+        {{ pop_empty() }}
+    {% endif %}
 </ul>
-
 {% endmacro %}

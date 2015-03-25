@@ -16,6 +16,27 @@ from tasty.database import Base, engine, session
 class TestAPI(unittest.TestCase):
     """ Tests for the core tasty functions """
 
+
+
+
+    def setUp(self):
+        """ Test setup """
+        self.client = app.test_client()
+
+        # Set up the tables in the database
+        Base.metadata.create_all(engine)
+
+    def tearDown(self):
+        """ Test teardown """
+        session.close()
+        # Remove the tables and their data from the database
+        Base.metadata.drop_all(engine)
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+
     # def testCreateCombination(self):
     #     """ Test Creating a Flavor Combination """
     #     flavors = ["eggs", 'bacon', 'chocolate', 'banana', 'macadamia', 'rum']
@@ -83,19 +104,3 @@ class TestAPI(unittest.TestCase):
     #     # Validate the content of the item retrieved from the DB
     #     self.assertEqual(data.id, 1)
     #     self.assertEqual(data.name, "macadamia nuts")
-
-    def setUp(self):
-        """ Test setup """
-        self.client = app.test_client()
-
-        # Set up the tables in the database
-        Base.metadata.create_all(engine)
-
-    def tearDown(self):
-        """ Test teardown """
-        session.close()
-        # Remove the tables and their data from the database
-        Base.metadata.drop_all(engine)
-
-if __name__ == "__main__":
-    unittest.main()

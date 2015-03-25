@@ -1,6 +1,6 @@
 __author__ = 'kristjin@github'
 
-from flask import url_for
+import json
 from flask.ext.login import UserMixin
 
 from sqlalchemy import Column, Integer, String, Table, ForeignKey, Boolean
@@ -27,13 +27,6 @@ class Flavor(Base):
                            backref='flavor'
                            )
     creator_id = Column(Integer, ForeignKey('users.id'))
-
-    def matched_html(self):
-        h = "<ul>\n"
-        for m in self.matches:
-            h += '  <li display="inline">{}</li>\n'.format(m.name)
-        h += "</ul>"
-        return h
 
     def matched_ids(self):
         if self.matches:
@@ -76,3 +69,9 @@ class User(Base, UserMixin):
     # and strings of ints for favorites
     favorites = Column(String())
     matches = Column(String())
+
+    def match(self, fid, mid):
+        pass
+
+    def unmatch(self, fid, mid):
+        pass

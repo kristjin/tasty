@@ -3,6 +3,8 @@
 
 {% block content %}
 
+<h1><span style="color:red">--->>ADMIN MODE<<---</span></h1>
+
 <div class="row">
   <div class="col-md-2 text-right metadata">
     <h2><a href="/flavor/{{ flavor.id }}">{{ flavor.name }}  </a></h2>
@@ -10,12 +12,12 @@
   <div class="col-md-5">
     <h3>Match Flavors...</h3>
     <h4>Click to match to {{ flavor.name }}:</h4>
-      {{ macros.unmatched_list(unmatched_flavors, flavor) }}
+      {{ macros.unmatched_default_list(unmatched_flavors, flavor) }}
   </div>
   <div class="col-md-5">
     <h3>Unmatch Flavors</h3>
     <h4>Click to unmatch from {{ flavor.name }}:</h4>
-      {{ macros.matched_list(all_matches, flavor) }}
+      {{ macros.matched_default_list(all_matches, flavor) }}
   </div>
 </div> <!-- /.row -->
 
