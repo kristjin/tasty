@@ -41,6 +41,7 @@ def adduser():
                 password=generate_password_hash(password),
                 admin=admin,
                 matches=json.dumps({})
+
                 )
     session.add(user)
     session.commit()

@@ -218,17 +218,20 @@ def get_flavor(fid):
     return session.query(Flavor).get(fid)
 
 
-def get_matched_ids(fid):
+def get_umids(fid):
     """ Return a list of all ids matched to fid """
     # print "get_matched_ids"
     user_match_dict = json.loads(current_user.matches)
     try:
         user_matched_ids = user_match_dict[fid]
     except KeyError:
-        user_matched_ids = {}
-    flavor = get_flavor(fid)
+        user_matched_ids = []
+    return set(user_matched_ids)
 
-    return set(set(user_matched_ids) & set(flavor.matched_ids()))
+def get_matched_ids(fid):
+    f = get_flavor(fid)
+    umids = get_umids(fid)
+    fmids = f.mids()
 
 
 def get_matched_objects(fid):

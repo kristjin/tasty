@@ -10,6 +10,7 @@ from .database import Base
 
 
 flavor_to_flavor = Table("flavor_to_flavor", Base.metadata,
+                         Column("user_id", Integer, ForeignKey("users.id"), primary_key=True),
                          Column("parent_flavor_id", Integer, ForeignKey("flavors.id"), primary_key=True),
                          Column("child_flavor_id", Integer, ForeignKey("flavors.id"), primary_key=True)
                          )
@@ -28,7 +29,7 @@ class Flavor(Base):
                            )
     creator_id = Column(Integer, ForeignKey('users.id'))
 
-    def matched_ids(self):
+    def default_mids(self):
         if self.matches:
             return [m.id for m in self.matches]
         else:
@@ -52,7 +53,7 @@ class Flavor(Base):
             return self
 
     def is_matched(self, flavor):
-        return flavor.id in self.matched_ids()
+        return flavor.id in self.default_mids()
 
 
 
@@ -65,10 +66,7 @@ class User(Base, UserMixin):
     email = Column(String(128), unique=True)
     password = Column(String(128))
     flavors = relationship("Flavor", backref="creator")
-    # Following should be JSON strings of personal matches
-    # and strings of ints for favorites
-    favorites = Column(String())
-    matches = Column(String())
+
 
     def match(self, fid, mid):
         pass
