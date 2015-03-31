@@ -4,5 +4,6 @@ div.metadata {
 }
 
 ul.match li{
+  margin-top: 20px;
   display: inline;
 }

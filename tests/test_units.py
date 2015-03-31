@@ -18,7 +18,6 @@ class TestAPI(unittest.TestCase):
 
 
 
-
     def setUp(self):
         """ Test setup """
         self.client = app.test_client()

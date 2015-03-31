@@ -5,11 +5,25 @@
     <li class="list-group-item">left to edit matches.</li>
 {% endmacro %}
 
+
+{% macro inline_relink(all_matches) %}
+<ul style="match">
+    {% if all_matches %}
+        {% for match in all_matches %}
+            <li><a href="/flavor/{{ match.id }}">{{ match.name }}  </a></li>
+        {% endfor %}
+    {% else %}
+        <li>To add flavor matches, first, click on the flavor name.</li>
+    {% endif %}
+</ul>
+{% endmacro %}
+
+
 {% macro matched_relink(all_matches, flavor) %}
 <ul>
     {% if all_matches %}
         {% for match in all_matches %}
-                <li class="list-group-item"><a href="/flavor/{{ match.id }}">{{ match.name }}  </a></li>
+            <li class="list-group-item"><a href="/flavor/{{ match.id }}">{{ match.name }}  </a></li>
         {% endfor %}
     {% else %}
         {{ pop_empty() }}

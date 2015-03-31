@@ -6,24 +6,29 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from tasty import app
 from .database import session
-from .models import Flavor, User
+from .models import Flavor, User, Match
 
 
-@app.route('/default_unmatch/<int:fid>')
 @app.route('/default_unmatch/<int:fid>/<int:mid>', methods=['GET'])
 @login_required
 def unmatch_default_flavors(fid, mid=0):
     """ Unpair a flavor and a default matching flavor """
+    f = get_flavor(fid)
     if mid:
-        flavor = get_flavor(fid)
-        match = session.query(Flavor).get(mid)
-        flavor.unmatch(match)
-        session.add(flavor)
-        session.commit()
+        dmids = f.get_default_mids()
+        if mid in dmids:
+            m = session.query(Match)\
+                       .filter(Match.owner_id == 0,
+                               Match.parent_id == fid,
+                               Match.matched_id == mid).first()
+            print "in unmatch_default_flavors m is {}".format(m)
+            session.delete(m)
+            session.commit()
+
     return render_template("match_default_flavors.html",
-                           flavor=get_flavor(fid),
-                           all_matches=get_matched_objects(fid),
-                           unmatched_flavors=get_unmatched_objects(fid))
+                           flavor=f,
+                           all_matches=f.get_all_mobs(0),
+                           unmatched_flavors=f.get_unmobs(0))
 
 
 @app.route('/default_match/<int:fid>')
@@ -31,38 +36,44 @@ def unmatch_default_flavors(fid, mid=0):
 @login_required
 def match_default_flavors(fid, mid=0):
     """ Pair a flavor and a default matching flavor """
+    f = get_flavor(fid)
     if mid:
-        flavor = get_flavor(fid)
-        match = get_flavor(mid)
-        flavor.match(match)
-        session.add(flavor)
-        session.commit()
-    print "get matched objects is ".format(get_matched_objects(1))
-    print "get unmatched objects is ".format(get_unmatched_objects(1))
+        dmids = f.get_default_mids()
+        if mid not in dmids:
+            m = Match(owner_id=0,
+                      parent_id=fid,
+                      matched_id=mid)
+            print "the state of m is {}".format(m)
+            session.add(m)
+            session.commit()
 
     return render_template("match_default_flavors.html",
-                           flavor=get_flavor(fid),
-                           all_matches=get_matched_objects(fid),
-                           unmatched_flavors=get_unmatched_objects(fid)
+                           flavor=f,
+                           all_matches=f.get_all_mobs(0),
+                           unmatched_flavors=f.get_unmobs(0)
                            )
 
 
-@app.route('/unmatch/<int:fid>')
 @app.route('/unmatch/<int:fid>/<int:mid>', methods=['GET'])
 @login_required
-def unmatch_flavors(fid, mid=0):
+def unmatch_flavors(fid, mid):
     """ Unpair a user's flavor and a matching flavor """
+    f = get_flavor(fid)
     if mid:
-        usr_m_dict = json.loads(current_user.matches)
-        usr_m_dict[fid].remove(mid)
-        current_user.matches = json.dumps(usr_m_dict)
-        session.add(current_user)
-        session.commit()
+        umids = f.get_user_mids(uid())
+        if mid in umids:
+            m = session.query(Match)\
+                       .filter(Match.owner_id == uid(),
+                               Match.parent_id == fid,
+                               Match.matched_id == mid).first()
+            print "the state of m is {}".format(m)
+            session.delete(m)
+            session.commit()
 
     return render_template("match_flavors.html",
-                           flavor=get_flavor(fid),
-                           all_matches=get_matched_objects(fid),
-                           unmatched_flavors=get_unmatched_objects(fid)
+                           flavor=f,
+                           all_matches=f.get_all_mobs(uid()),
+                           unmatched_flavors=f.get_unmobs(uid())
                            )
 
 
@@ -71,34 +82,30 @@ def unmatch_flavors(fid, mid=0):
 @login_required
 def match_flavors(fid, mid=0):
     """ Pair a flavor and a user's matching flavor """
-
+    f = get_flavor(fid)
     if mid:
-        usr_m_dict = json.loads(current_user.matches)
-        if not usr_m_dict[fid]:
-            usr_m_dict[fid] = {mid}
-            current_user.matches = json.dumps(usr_m_dict)
-            session.add(current_user)
+        umids = f.get_user_mids(current_user.id)
+        if mid not in umids:
+            m = Match(owner_id=current_user.id,
+                      parent_id=fid,
+                      matched_id=mid)
+            session.add(m)
             session.commit()
-        else:
-            if mid not in usr_m_dict[fid]:
-                usr_m_dict[fid].add(mid)
-                current_user.matches = json.dumps(usr_m_dict)
-                session.add(current_user)
-                session.commit()
 
     return render_template("match_flavors.html",
-                           flavor=get_flavor(fid),
-                           all_matches=get_matched_objects(fid),
-                           unmatched_flavors=get_unmatched_objects(fid)
+                           flavor=f,
+                           all_matches=f.get_all_mobs(uid()),
+                           unmatched_flavors=f.get_unmobs(uid())
                            )
 
 
 @app.route("/flavor/<int:fid>")
 def view_flavor_get(fid):
+    f = get_flavor(fid)
     """ View match details of a given ingredient """
     return render_template("flavor.html",
-                           all_matches=get_matched_objects(fid),
-                           flavor=get_flavor(fid),
+                           all_matches=f.get_all_mobs(uid()),
+                           flavor=f,
                            )
 
 
@@ -155,7 +162,6 @@ def create_new_user_post():
     name = request.form["name"]
     pw1 = request.form["pw1"]
     pw2 = request.form["pw2"]
-    matches = json.dumps({})
 
     user = session.query(User).filter(User.email == email).first()
     if user:
@@ -171,8 +177,7 @@ def create_new_user_post():
         user = User(
             email=email,
             name=name,
-            password=generate_password_hash(pw1),
-            matches=matches
+            password=generate_password_hash(pw1)
         )
         session.add(user)
         session.commit()
@@ -210,54 +215,19 @@ def view_flavors_list(page=1, paginate_by=10):
                            has_prev=has_prev,
                            page=page,
                            total_pages=total_pages,
-                           current_user=current_user)
+                           uid=uid())
 
 
 def get_flavor(fid):
-    # print "get_flavor()"
     return session.query(Flavor).get(fid)
 
 
-def get_umids(fid):
-    """ Return a list of all ids matched to fid """
-    # print "get_matched_ids"
-    user_match_dict = json.loads(current_user.matches)
-    try:
-        user_matched_ids = user_match_dict[fid]
-    except KeyError:
-        user_matched_ids = []
-    return set(user_matched_ids)
-
-def get_matched_ids(fid):
-    f = get_flavor(fid)
-    umids = get_umids(fid)
-    fmids = f.mids()
+def get_all_fobs():
+    return session.query(Flavor).all()
 
 
-def get_matched_objects(fid):
-    """ Return a list of all objects matched to fid """
-    # print "get_matched_objects"
-    mobjs = []
-    for m in get_matched_ids(fid):
-        mobjs.append(m)
-    return mobjs
-
-
-def get_unmatched_ids(fid):
-    """ Return a list of all ids NOT matched to fid """
-    # print "get_unmatched_ids"
-    all_flavor_objects = session.query(Flavor).all()
-    all_fids = set([f.id for f in all_flavor_objects])
-    mids = get_matched_ids(fid)
-    umids = set(all_fids - mids)
-    umids.remove(fid)
-    return umids
-
-
-def get_unmatched_objects(fid):
-    """ Return a list of all objects NOT matched to fid """
-    # print "get_unmatched_objects"
-    umobjs = set()
-    for fid in get_unmatched_ids(fid):
-        umobjs.add(session.query(Flavor).get(fid))
-    return umobjs
+def uid():
+    if current_user.is_anonymous():
+        return 0
+    if current_user.is_authenticated():
+        return current_user.id

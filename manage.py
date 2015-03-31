@@ -39,9 +39,7 @@ def adduser():
         password_2 = getpass("Re-enter password: ")
     user = User(name=name, email=email,
                 password=generate_password_hash(password),
-                admin=admin,
-                matches=json.dumps({})
-
+                admin=admin
                 )
     session.add(user)
     session.commit()
@@ -49,32 +47,12 @@ def adduser():
 
 @manager.command
 def seed():
-    ingredients = ['eggs', 'bacon', 'bananas', 'chocolate', 'macadamia nuts', 'rum']
-    for ingredient in ingredients:
-        i = Flavor(name=ingredient)
-        session.add(i)
+    flavors = ['eggs', 'bacon', 'bananas', 'chocolate', 'macadamia nuts', 'rum']
+    for name in flavors:
+        f = Flavor(name=name)
+        session.add(f)
         session.commit()
 
-    eggs = session.query(Flavor).filter(Flavor.name == 'eggs').first()
-    bacon = session.query(Flavor).filter(Flavor.name == 'bacon').first()
-    bananas = session.query(Flavor).filter(Flavor.name == 'bananas').first()
-    chocolate = session.query(Flavor).filter(Flavor.name == 'chocolate').first()
-    macadamia = session.query(Flavor).filter(Flavor.name == 'macadamia nuts').first()
-    rum = session.query(Flavor).filter(Flavor.name == 'rum').first()
-
-    eggs.match(bacon)
-    bananas.match(chocolate)
-    bananas.match(macadamia)
-    bananas.match(rum)
-    chocolate.match(bananas)
-    chocolate.match(macadamia)
-    chocolate.match(bacon)
-    macadamia.match(bananas)
-    macadamia.match(chocolate)
-    rum.match(chocolate)
-    rum.match(bananas)
-
-    session.add_all([eggs, bacon, bananas, chocolate, macadamia, rum])
 
 @manager.command
 def run():
